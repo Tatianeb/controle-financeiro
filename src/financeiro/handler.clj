@@ -18,6 +18,8 @@
 
            (GET "/saldo" [] (como-json {:saldo 0}))
 
+           (GET "/saldo" [] (como-json {:saldo (db/saldo)}))
+
            (POST "/transacoes"
                  requisicao (-> (db/registrar (:body requisicao))
                                 (como-json 201)))
