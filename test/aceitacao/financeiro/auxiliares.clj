@@ -16,7 +16,7 @@
 
 (defn endereco-para
   [rota]
-  (str "http://localhost:" porta-padrao "/saldo"))
+  (str "http://localhost:" porta-padrao rota))
 
 (def requisicao-para (comp http/get endereco-para))
 
