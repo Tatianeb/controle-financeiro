@@ -4,7 +4,8 @@
             [cheshire.core :as json]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-body]]
-            [financeiro.db :as db]))
+            [financeiro.db :as db]
+            [financeiro.transacoes :as transacoes]))
 
 (defn como-json
   [conteudo & [status]]
@@ -19,8 +20,11 @@
            (GET "/saldo" [] (como-json {:saldo (db/saldo)}))
 
            (POST "/transacoes"
-                 requisicao (-> (db/registrar (:body requisicao))
-                                (como-json 201)))
+                 requisicao
+             (if (transacoes/valida? (:body requisicao))
+               (-> (db/registrar (:body requisicao))
+                   (como-json 201))
+               (como-json {:menssagem "Requisição inválida"} 422)))
            (route/not-found "Recurso não encontrado"))
 
 (def app
