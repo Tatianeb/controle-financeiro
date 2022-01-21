@@ -58,3 +58,27 @@ ns financeiro.db-test
                                  (transacoes-do-tipo "despesa")
                                  => '({:valor 2 :tipo "despesa"}
                                       {:valor 200 :tipo "despesa"}))))
+
+(facts "Filtrar transações por rótulo"
+       (def transacoes-aleatorias
+         '({:valor 7.0M :tipo "despesa" :rotulos ["sorvete" "entretenimento"]}
+           {:valor 88.0M :tipo "despesa" :rotulos ["livro" "educação"]}
+           {:valor 106.0M :tipo "despesa" :rotulos ["curso" "educação"]}
+           {:valor 8000.0M :tipo "receita" :rotulos ["salario"]}))
+
+       (against-background
+         [(before :facts [(limpar)
+                          (doseq [transacao transacoes-aleatorias]
+                                 (registrar transacao))])]
+
+         (fact "encontrar a transação com rótulo 'salário'"
+               (transacao-com-filtro {:rotulos "salario"})
+               => '({:valor 8000.0M :tipo "receita" :rotulos ["salario"]}))
+
+         (fact "encontrar as 2 transações com rótulo 'educação'"
+               (transacao-com-filtro {:rotulos "educação"})
+               => '({:valor 88.0M :tipo "despesa" :rotulos ["livro" educação]}
+                    {:valor 106.0M :tipo "despesa" :rotulos ["curso" educação]})))
+
+
+       )
